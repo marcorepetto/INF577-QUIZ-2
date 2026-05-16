@@ -19,12 +19,12 @@ El modelo actual parece estar sobreajustando. Un aumento de datos más agresivo 
 - [x] **Label Smoothing**: En lugar de etiquetas duras (0 o 1), usar valores suavizados para reducir la confianza excesiva del modelo (implementado).
 
 ## 3. Preprocesamiento de Imágenes
-- **Normalización**: Aplicar normalización `(x - mean) / std`. Si se usa transfer learning, usar los valores de ImageNet. Si no, calcularlos sobre el dataset de entrenamiento.
+- [x] **Normalización**: Aplicar normalización `(x - mean) / std`. Si se usa transfer learning, usar los valores de ImageNet. Si no, calcularlos sobre el dataset de entrenamiento.
 - **Alineación Facial**: Si el dataset lo permite, detectar puntos de referencia (landmarks) y alinear los rostros. Esto reduce la varianza espacial y facilita mucho la tarea de clasificación.
 
 ## 4. Estrategia de Entrenamiento
 - [x] **Early Stopping**: Detener el entrenamiento cuando el rendimiento en validación deja de mejorar para evitar overfitting (implementado).
-- **Scheduler**: Cambiar a **OneCycleLR** o **CosineAnnealingLR**. Estos facilitan encontrar mínimos más profundos y estables comparado con `ReduceLROnPlateau`.
+- [x] **Scheduler**: Cambiar a **OneCycleLR** o **CosineAnnealingLR**. Estos facilitan encontrar mínimos más profundos y estables comparado con `ReduceLROnPlateau`.
 - **Warmup**: Empezar con una LR muy baja por unas pocas épocas para evitar desestabilizar los pesos al inicio (especialmente con transfer learning).
 - **Focal Loss**: Si existen ejemplos de rostros muy difíciles de clasificar, Focal Loss asigna más peso a esos errores que a los ejemplos fáciles.
 
