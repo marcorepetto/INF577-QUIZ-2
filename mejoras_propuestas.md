@@ -23,16 +23,17 @@ El modelo actual parece estar sobreajustando. Un aumento de datos más agresivo 
 - **Alineación Facial**: Si el dataset lo permite, detectar puntos de referencia (landmarks) y alinear los rostros. Esto reduce la varianza espacial y facilita mucho la tarea de clasificación.
 
 ## 4. Estrategia de Entrenamiento
+- [x] **Early Stopping**: Detener el entrenamiento cuando el rendimiento en validación deja de mejorar para evitar overfitting (implementado).
 - **Scheduler**: Cambiar a **OneCycleLR** o **CosineAnnealingLR**. Estos facilitan encontrar mínimos más profundos y estables comparado con `ReduceLROnPlateau`.
 - **Warmup**: Empezar con una LR muy baja por unas pocas épocas para evitar desestabilizar los pesos al inicio (especialmente con transfer learning).
 - **Focal Loss**: Si existen ejemplos de rostros muy difíciles de clasificar, Focal Loss asigna más peso a esos errores que a los ejemplos fáciles.
 
 ## 5. Validación y Post-procesamiento
-- **K-Fold Cross Validation**: En lugar de un solo split 80/20, usar 5-folds para asegurar que el modelo sea robusto a diferentes particiones de los datos.
-- **Test-Time Augmentation (TTA)**: Durante la inferencia, pasar la misma imagen y su versión "flipped", promediando los resultados. Esto suele subir el score en Kaggle entre 1% y 3%.
-- **Ensemble**: Entrenar dos arquitecturas diferentes (ej. ResNet y EfficientNet) y promediar sus predicciones.
+- [ ] **K-Fold Cross Validation**: En lugar de un solo split 80/20, usar 5-folds para asegurar que el modelo sea robusto a diferentes particiones de los datos.
+- [x] **Test-Time Augmentation (TTA)**: Durante la inferencia, pasar la misma imagen y su versión "flipped", promediando los resultados. Esto suele subir el score en Kaggle entre 1% y 3%.
+- [ ] **Ensemble**: Entrenar dos arquitecturas diferentes (ej. ResNet y EfficientNet) y promediar sus predicciones.
 
 ## 6. Diagnóstico de la Brecha de Score
 La diferencia entre 0.83 (val) y 0.69 (Kaggle) es muy alta.
-- **Verificar el Balance**: Asegurarse de que el umbral (threshold) de 0.5 es óptimo. A veces, ajustar el umbral en el set de validación mejora el F1.
-- **Consistencia de Preprocesamiento**: Garantizar que el preprocesamiento aplicado en el set de prueba sea **idéntico** al de validación (especialmente el escalado a [0, 1]).
+- [x] **Verificar el Balance**: Asegurarse de que el umbral (threshold) de 0.5 es óptimo. A veces, ajustar el umbral en el set de validación mejora el F1.
+- [x] **Consistencia de Preprocesamiento**: Garantizar que el preprocesamiento aplicado en el set de prueba sea **idéntico** al de validación (especialmente el escalado a [0, 1]).

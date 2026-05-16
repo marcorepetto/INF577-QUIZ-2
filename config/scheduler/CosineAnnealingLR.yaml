@@ -1,0 +1,8 @@
+name: CosineAnnealingLR
+# T_max determines the number of epochs for a half-cycle of the cosine wave.
+# Setting it to 30 means the learning rate will smoothly decrease to eta_min over 30 epochs,
+# helping the model settle into a deeper, more robust minimum.
+T_max: 30 
+# eta_min is the minimum learning rate at the end of the cosine decay.
+# A small non-zero value prevents the model from completely freezing its weights.
+eta_min: 1e-6

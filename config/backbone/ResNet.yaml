@@ -1,0 +1,12 @@
+name: ResNet
+stem:
+  channels: 16
+blocks:
+  - channels: 16
+    stride: 1
+  - channels: 32
+    stride: 2
+  - channels: 64
+    stride: 2
+  - channels: 128
+    stride: 2

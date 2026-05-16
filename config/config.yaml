@@ -1,28 +1,30 @@
 defaults:
-  - backbone: CNN
+  - backbone: ResNet
   - head: MLP
   - optimizer: Adam
+  - scheduler: CosineAnnealingLR
   - _self_
 
 architecture:
-  backbone: CNN
+  backbone: ResNet
   head: MLP
 
 training:
   data_path: data/train.npz
   batch_size: 32
-  epochs: 50
-  num_workers: 2
+  epochs: 30
+  num_workers: 4
   device: auto # auto, cuda, or cpu
-  label_smoothing: 0.1
-  augmentation:
-    horizontal_flip: true
-    color_jitter:
-      brightness: 0.2
-      contrast: 0.2
-      saturation: 0.2
-      hue: 0.1
-    gaussian_blur:
-      kernel_size: 3
-      sigma: [0.1, 1.5]
 
+normalization: mean
+
+early_stopping:
+  patience: 10
+  min_delta: 0.0001
+
+label_smoothing: 0.1
+
+augmentation:
+  horizontal_flip: true
+
+fit_threshold: false

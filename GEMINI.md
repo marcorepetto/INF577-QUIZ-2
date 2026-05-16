@@ -17,11 +17,15 @@ To keep `main.py` architecture-agnostic, all models must be instantiated via a *
 - **Pattern**: The factory receives the component name and its specific configuration sub-object (`cfg.backbone`).
 - **Benefit**: Adding a new architecture only requires registering it in the factory, keeping the training loop untouched.
 
-### 3. Optimizer & Hyperparameter Modularization
-Optimizers are also managed via Config Groups.
-- **Config**: Parameters like `lr`, `betas`, and `weight_decay` live in `config/optimizer/*.yaml`.
-- **Factory**: `models/optimizer.py` handles the instantiation of PyTorch optimizers using these parameters.
-- **Benefit**: Changing from Adam to SGD or tuning hyperparameters no longer requires code changes.
+### 3. Optimizer & Scheduler Modularization
+Optimizers and Schedulers are managed via Hydra Config Groups for maximum flexibility.
+- **Config**:
+    - Optimizers: `config/optimizer/*.yaml` (e.g., Adam, SGD).
+    - Schedulers: `config/scheduler/*.yaml` (e.g., CosineAnnealingLR, ReduceLROnPlateau).
+- **Factory**: 
+    - Optimizers: `models/optimizer.py`
+    - Schedulers: `models/scheduler/factory.py`
+- **Benefit**: You can swap training strategies (e.g., `scheduler=CosineAnnealingLR`) without changing the training loop in `main.py`.
 
 ### 4. Model Implementation
 - Every backbone and head class must inherit from `nn.Module`.

@@ -37,6 +37,10 @@ El clasificador final definido en `models/heads/MLP.py`:
     - Factor: 0.5.
     - Paciencia: 5 épocas.
     - Métrica monitoreada: Val F1 (maximizando).
+- **Early Stopping**: 
+    - Paciencia: 10 épocas.
+    - Min Delta: 0.0001.
+    - Detiene el entrenamiento si el F1 de validación no mejora significativamente, evitando el sobreajuste.
 - **Loss Function**: `BCEWithLogitsLoss`.
     - Incluye `pos_weight` calculado dinámicamente según la proporción de clases en el set de entrenamiento para mitigar el desbalance.
 - **Label Smoothing**: Aplicado un factor de 0.1 (transforma 0 -> 0.05 y 1 -> 0.95 para suavizar las etiquetas y evitar sobreconfianza).

@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader, random_split
 from models.backbone import get_backbone
 from models.heads.factory import get_head
 from models.optimizer import get_optimizer
+from models.scheduler.factory import get_scheduler
 from data.dataset import FacialAttributesDataset
 
 def calculate_f1(preds, targets, threshold=0.5):
@@ -20,18 +21,18 @@ def calculate_f1(preds, targets, threshold=0.5):
     f1 = 2 * (precision * recall) / (precision + recall + 1e-7)
     return f1
 
-def run_inference(model, device, test_path, batch_size, num_workers, output_path="outputs/submission.csv"):
+def run_inference(model, device, test_path, batch_size, num_workers, threshold=0.5, tta=True, output_path="outputs/submission.csv", normalization_fun=None):
     import os
     import pandas as pd
     from torch.utils.data import DataLoader
     
-    print(f"Starting inference on test set: {test_path}")
+    print(f"Starting inference on test set: {test_path} (Threshold: {threshold:.4f}, TTA: {tta})")
     if not os.path.exists(test_path):
         print(f"Test file not found at {test_path}, skipping inference.")
         return
 
     model.eval()
-    test_dataset = FacialAttributesDataset(test_path, transform=None)
+    test_dataset = FacialAttributesDataset(test_path, transform=None, normalization_fun=normalization_fun)
     test_loader = DataLoader(
         test_dataset, 
         batch_size=batch_size, 
@@ -44,8 +45,20 @@ def run_inference(model, device, test_path, batch_size, num_workers, output_path
     with torch.no_grad():
         for images in test_loader:
             images = images.to(device)
+            
+            # Original images
             outputs = model(images)
-            preds = (torch.sigmoid(outputs) > 0.5).int().cpu().numpy()
+            
+            if tta:
+                # Flipped images
+                images_flipped = torch.flip(images, dims=[3])
+                outputs_flipped = model(images_flipped)
+                # Average probabilities (or logits)
+                probs = (torch.sigmoid(outputs) + torch.sigmoid(outputs_flipped)) / 2.0
+            else:
+                probs = torch.sigmoid(outputs)
+                
+            preds = (probs > threshold).int().cpu().numpy()
             all_test_preds.append(preds)
     
     all_test_preds = np.concatenate(all_test_preds).flatten()
@@ -100,11 +113,14 @@ def main(cfg):
             kernel_size=aug_cfg.gaussian_blur.kernel_size,
             sigma=tuple(aug_cfg.gaussian_blur.sigma)
         ))
+
+    normalization = cfg.get("normalization", "intrgb")
         
     train_transform = transforms.Compose(transform_list)
 
     data_path = cfg.training.get("data_path", "data/train.npz")
-    full_dataset = FacialAttributesDataset(data_path, transform=train_transform)
+    full_dataset = FacialAttributesDataset(data_path, transform=train_transform, normalization=normalization)
+    f_n = full_dataset.get_normalization_function()  # Get the normalization function to apply to val/test datasets
     
     # Stratified Split into train and validation (80/20)
     all_labels = full_dataset.labels
@@ -117,7 +133,7 @@ def main(cfg):
     
     train_dataset = torch.utils.data.Subset(full_dataset, train_indices)
     # We need a different dataset object for val to avoid the train_transform
-    val_dataset_base = FacialAttributesDataset(data_path, transform=None)
+    val_dataset_base = FacialAttributesDataset(data_path, transform=None, normalization=None, normalization_fun=f_n)
     val_dataset = torch.utils.data.Subset(val_dataset_base, val_indices)
     
     train_loader = DataLoader(
@@ -145,7 +161,7 @@ def main(cfg):
     print(f"Calculated pos_weight: {pos_weight:.4f}")
 
     optimizer = get_optimizer(model.parameters(), cfg.optimizer)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=5)
+    scheduler = get_scheduler(optimizer, cfg.scheduler)
     criterion = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([pos_weight]).to(device))
     
     print(f"Starting training: {backbone_name} + {head_name}")
@@ -162,6 +178,12 @@ def main(cfg):
     best_f1 = 0.0
     best_model_state = None
     smoothing = cfg.get("label_smoothing", 0.0)
+    
+    # Early Stopping setup
+    early_stop_cfg = cfg.get("early_stopping", None)
+    patience_counter = 0
+    early_stop_patience = early_stop_cfg.patience if early_stop_cfg else None
+    early_stop_min_delta = early_stop_cfg.min_delta if early_stop_cfg else 0.0
 
     for epoch in range(cfg.training.epochs):
         model.train()
@@ -204,11 +226,14 @@ def main(cfg):
         val_f1 = calculate_f1(torch.cat(all_preds), torch.cat(all_labels))
 
         # Track best model
-        if val_f1 > best_f1:
+        if val_f1 > best_f1 + early_stop_min_delta:
             best_f1 = val_f1
             best_model_state = model.state_dict()
+            patience_counter = 0
+        else:
+            patience_counter += 1
 
-        scheduler.step(val_f1)
+        scheduler.step()
         current_lr = optimizer.param_groups[0]['lr']
 
         print(f"Epoch {epoch+1}/{cfg.training.epochs} - Train Loss: {train_loss:.4f} - Val Loss: {val_loss:.4f} - Val F1: {val_f1:.4f} - LR: {current_lr:.6f}")
@@ -221,6 +246,10 @@ def main(cfg):
             "lr": current_lr
         })
 
+        if early_stop_patience and patience_counter >= early_stop_patience:
+            print(f"Early stopping triggered after {epoch+1} epochs.")
+            break
+
     # Save Best Model at the end
     if best_model_state is not None:
         import os
@@ -232,12 +261,42 @@ def main(cfg):
         # Run inference on test set
         test_path = cfg.training.get("test_path", "data/test.npz")
         model.load_state_dict(best_model_state)
+
+        # --- Threshold Optimization ---
+        print("Finding optimal threshold on validation set...")
+        model.eval()
+        val_logits = []
+        val_targets = []
+        with torch.no_grad():
+            for images, labels in val_loader:
+                images, labels = images.to(device), labels.to(device)
+                outputs = model(images)
+                val_logits.append(outputs.cpu())
+                val_targets.append(labels.cpu())
+        
+        val_logits = torch.cat(val_logits)
+        val_targets = torch.cat(val_targets)
+        
+        best_threshold = 0.5
+        if cfg.get("fit_threshold", True):
+            best_val_f1_opt = 0.0
+            for threshold in np.arange(0.1, 0.9, 0.05):
+                f1 = calculate_f1(val_logits, val_targets, threshold=threshold)
+                if f1 > best_val_f1_opt:
+                    best_val_f1_opt = f1
+                    best_threshold = threshold
+        
+            print(f"Optimal threshold: {best_threshold:.4f} with optimized Val F1: {best_val_f1_opt:.4f}")
+
         run_inference(
             model, 
             device, 
             test_path, 
             cfg.training.batch_size, 
-            cfg.training.num_workers
+            cfg.training.num_workers,
+            threshold=best_threshold,
+            tta=cfg.get("tta", True),
+            normalization_fun=f_n
         )
 
 if __name__ == "__main__":
