@@ -1,0 +1,280 @@
+Unbalance diagnosis for column: age
+Proportion of each label in the entire dataset:
+age
+1    0.721175
+0    0.278825
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+age
+1    0.580641
+0    0.419359
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+age
+1    0.937961
+0    0.062039
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: male
+Proportion of each label in the entire dataset:
+male
+0    0.52105
+1    0.47895
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+male
+1    0.737926
+0    0.262074
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+male
+0    0.920544
+1    0.079456
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: pale_skin
+Proportion of each label in the entire dataset:
+pale_skin
+0    0.94795
+1    0.05205
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+pale_skin
+0    0.984795
+1    0.015205
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+pale_skin
+0    0.891114
+1    0.108886
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: smiling
+Proportion of each label in the entire dataset:
+smiling
+0    0.54105
+1    0.45895
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+smiling
+0    0.602481
+1    0.397519
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+smiling
+1    0.553712
+0    0.446288
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: heavy_makeup
+Proportion of each label in the entire dataset:
+heavy_makeup
+0    0.65405
+1    0.34595
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+heavy_makeup
+0    0.899085
+1    0.100915
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+heavy_makeup
+1    0.723938
+0    0.276062
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: big_lips
+Proportion of each label in the entire dataset:
+big_lips
+0    0.76405
+1    0.23595
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+big_lips
+0    0.800766
+1    0.199234
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+big_lips
+0    0.707412
+1    0.292588
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: big_nose
+Proportion of each label in the entire dataset:
+big_nose
+0    0.72995
+1    0.27005
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+big_nose
+0    0.609445
+1    0.390555
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+big_nose
+0    0.91584
+1    0.08416
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: high_cheekbones
+Proportion of each label in the entire dataset:
+high_cheekbones
+0    0.564575
+1    0.435425
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+high_cheekbones
+0    0.639278
+1    0.360722
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+high_cheekbones
+1    0.550661
+0    0.449339
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: oval_face
+Proportion of each label in the entire dataset:
+oval_face
+0    0.72995
+1    0.27005
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+oval_face
+0    0.801673
+1    0.198327
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+oval_face
+0    0.619311
+1    0.380689
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: blond_hair
+Proportion of each label in the entire dataset:
+blond_hair
+0    0.86845
+1    0.13155
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+blond_hair
+0    0.934729
+1    0.065271
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+blond_hair
+0    0.766209
+1    0.233791
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: black_hair
+Proportion of each label in the entire dataset:
+black_hair
+0    0.765725
+1    0.234275
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+black_hair
+0    0.751854
+1    0.248146
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+black_hair
+0    0.787122
+1    0.212878
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: eyeglasses
+Proportion of each label in the entire dataset:
+eyeglasses
+0    0.9158
+1    0.0842
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+eyeglasses
+0    0.86748
+1    0.13252
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+eyeglasses
+0    0.990338
+1    0.009662
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: wearing_lipstick
+Proportion of each label in the entire dataset:
+wearing_lipstick
+0    0.577
+1    0.423
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+wearing_lipstick
+0    0.844363
+1    0.155637
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+wearing_lipstick
+1    0.835431
+0    0.164569
+Name: proportion, dtype: float64
+
+
+Unbalance diagnosis for column: narrow_eyes
+Proportion of each label in the entire dataset:
+narrow_eyes
+0    0.8822
+1    0.1178
+Name: proportion, dtype: float64
+
+Proportion of each label for target=0:
+narrow_eyes
+0    0.863442
+1    0.136558
+Name: proportion, dtype: float64
+
+Proportion of each label for target=1:
+narrow_eyes
+0    0.911137
+1    0.088863
+Name: proportion, dtype: float64
+
+

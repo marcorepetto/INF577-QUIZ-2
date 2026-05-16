@@ -1,0 +1,6 @@
+.venv/
+*.npz
+*.csv
+__pycache__/
+outputs/
+wandb/

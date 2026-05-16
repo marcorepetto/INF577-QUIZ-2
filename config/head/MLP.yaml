@@ -1,0 +1,3 @@
+linear:
+  - layer_1: 64
+dropout_rate: 0.5

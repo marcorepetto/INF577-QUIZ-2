@@ -1,0 +1,16 @@
+defaults:
+  - backbone: CNN
+  - head: MLP
+  - optimizer: Adam
+  - _self_
+
+architecture:
+  backbone: ${hydra:runtime.choices.backbone}
+  head: ${hydra:runtime.choices.head}
+
+training:
+  batch_size: 32
+  epochs: 50
+  num_workers: 2
+  device: auto # auto, cuda, or cpu
+

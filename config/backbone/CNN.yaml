@@ -1,0 +1,12 @@
+conv:
+  kernel_size: 3
+  stride: 1
+  padding: 1
+  sizes:
+    stem: 32
+    block_1: 32
+    block_2: 64
+    block_3: 128
+max_pool:
+  kernel_size: 2
+  stride: 2
