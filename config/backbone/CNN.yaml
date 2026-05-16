@@ -1,3 +1,4 @@
+name: CNN
 conv:
   kernel_size: 3
   stride: 1

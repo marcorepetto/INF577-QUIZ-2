@@ -5,12 +5,24 @@ defaults:
   - _self_
 
 architecture:
-  backbone: ${hydra:runtime.choices.backbone}
-  head: ${hydra:runtime.choices.head}
+  backbone: CNN
+  head: MLP
 
 training:
+  data_path: data/train.npz
   batch_size: 32
   epochs: 50
   num_workers: 2
   device: auto # auto, cuda, or cpu
+  label_smoothing: 0.1
+  augmentation:
+    horizontal_flip: true
+    color_jitter:
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+      hue: 0.1
+    gaussian_blur:
+      kernel_size: 3
+      sigma: [0.1, 1.5]
 
